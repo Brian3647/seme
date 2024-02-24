@@ -2,6 +2,8 @@
 
 toki pona word look-up in the CLI
 
+![usage image](.github/example.png)
+
 ## Installation
 
 Using `cargo`: `cargo install --git https://Brian3647/nimi`
