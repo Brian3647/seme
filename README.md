@@ -1,4 +1,4 @@
-# nimi
+# seme
 
 toki pona word look-up in the CLI
 
@@ -6,18 +6,18 @@ toki pona word look-up in the CLI
 
 ## Installation
 
-Using `cargo`: `cargo install --git https://Brian3647/nimi`
+Using `cargo`: `cargo install --git https://Brian3647/seme`
 
 ## Usage
 
 ```sh
-nimi <word> [--json | -j]
+seme <word> [--json | -j]
 ```
 
 ```sh
 # Examples
 
-nimi # defaults to `toki`
-nimi jan
-nimi toki --json # raw json data
+seme # defaults to `toki`
+seme jan
+seme toki --json # raw json data
 ```

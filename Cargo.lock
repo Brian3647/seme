@@ -386,19 +386,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6877bb514081ee2a7ff5ef9de3281f14a4dd4bceac4c09388074a6b5df8a139a"
 
 [[package]]
-name = "nimi"
-version = "0.1.0"
-dependencies = [
- "chrono",
- "colored",
- "isahc",
- "itertools",
- "linku-sona",
- "serde",
- "serde_json",
-]
-
-[[package]]
 name = "num-traits"
 version = "0.2.18"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -522,6 +509,19 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "fbc91545643bcf3a0bbb6569265615222618bdf33ce4ffbbd13c4bbd4c093534"
 dependencies = [
  "windows-sys 0.52.0",
+]
+
+[[package]]
+name = "seme"
+version = "0.1.0"
+dependencies = [
+ "chrono",
+ "colored",
+ "isahc",
+ "itertools",
+ "linku-sona",
+ "serde",
+ "serde_json",
 ]
 
 [[package]]
