@@ -20,7 +20,7 @@ struct Cli {
 	json: bool,
 	/// The language used to get the word definitions.
 	/// This must be a valid ISO 639-1 language code, such as "en" for English
-	/// or "eo" for Esperanto.
+	/// or "eo" for Esperanto. Do note not all languages might be available.
 	#[clap(short = 't', long, default_value = "en")]
 	toki: String,
 	/// The word to get the definition of

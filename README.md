@@ -11,7 +11,15 @@ Using `cargo`: `cargo install --git https://Brian3647/seme`
 ## Usage
 
 ```sh
-seme <word> [--json | -j]
+Usage: seme [OPTIONS] <WORD>
+
+Arguments:
+  <WORD>  The word to get the definition of
+
+Options:
+  -j, --json         Show the RAW JSON response from the API
+  -t, --toki <TOKI>  The language used to get the word definitions. This must be a valid ISO 639-1 language code, such as "en" for English or "eo" for Esperanto. Do note not all languages might be available. [default: en]
+  -h, --help         Print help
 ```
 
 ```sh
@@ -20,4 +28,5 @@ seme <word> [--json | -j]
 seme # defaults to `toki`
 seme jan
 seme toki --json # raw json data
+seme nanpa --toki es # give the definition in spanish
 ```
