@@ -45,7 +45,19 @@ fn show(word: Box<Word>) {
 		word.translations.get("en").unwrap().definition.clone()
 	};
 
-	println!("{} {}", "~>".bold(), word.word.bold());
+	println!(
+		"{} {} {}",
+		"~>".bold(),
+		word.word.bold(),
+		if let Some(ucsur) = word.representations.and_then(|r| r.ucsur) {
+			char::from_u32(u32::from_str_radix(ucsur.trim_start_matches("U+"), 16).unwrap())
+				.map(|c| format!("({})", c))
+				.unwrap()
+		} else {
+			String::new()
+		}
+	);
+
 	println!(
 		"{} · {} - {}",
 		colored_usage_category(&word.usage_category),
