@@ -2,7 +2,9 @@
 
 toki pona word look-up in the CLI
 
-![usage image](.github/example.png)
+![example of usage](.github/example.png)
+
+_note the UCSUR are just a square for me because my font doesn't support them, but if yours does you should see the sitelen pona_
 
 ## Installation
 
@@ -25,7 +27,6 @@ Options:
 ```sh
 # Examples
 
-seme # defaults to `toki`
 seme jan
 seme toki --json # raw json data
 seme nanpa --toki es # give the definition in spanish
