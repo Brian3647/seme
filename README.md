@@ -18,7 +18,7 @@ Arguments:
 
 Options:
   -j, --json         Show the RAW JSON response from the API
-  -t, --toki <TOKI>  The language used to get the word definitions. This must be a valid ISO 639-1 language code, such as "en" for English or "eo" for Esperanto. Do note not all languages might be available. [default: en]
+  -t, --toki <TOKI>  The language used to get the word definitions. [default: en]
   -h, --help         Print help
 ```
 

@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use clap::Parser;
 use colored::ColoredString;
 use colored::Colorize;
@@ -19,8 +21,6 @@ struct Cli {
 	#[clap(short = 'j', long)]
 	json: bool,
 	/// The language used to get the word definitions.
-	/// This must be a valid ISO 639-1 language code, such as "en" for English
-	/// or "eo" for Esperanto. Do note not all languages might be available.
 	#[clap(short = 't', long, default_value = "en")]
 	toki: String,
 	/// The word to get the definition of
@@ -77,11 +77,13 @@ fn show(word: Box<Word>, toki: String) {
 	);
 
 	println!(
-		"{} · {} - {}",
+		"{} {} {} - {}",
 		colored_usage_category(&word.usage_category),
+		format!("({}%) ·", get_usage_percentage(word.usage)).bright_black(),
 		word.book.to_string().bright_black(),
 		word.creator.join(", ")
 	);
+
 	println!("--------------");
 	println!("{}", definition)
 }
@@ -94,4 +96,17 @@ fn colored_usage_category(cat: &UsageCategory) -> ColoredString {
 		UsageCategory::Obscure => "obscure".magenta(),
 		UsageCategory::Sandbox => "sandbox".bright_black(),
 	}
+}
+
+fn get_usage_percentage(usage: HashMap<String, u8>) -> u8 {
+	let mut latest: (u16, u8) = (0, 0);
+	for key in usage.keys() {
+		let year = key[0..4].parse::<u16>().unwrap();
+		let month = key[5..7].parse::<u8>().unwrap();
+		if latest.0 < year || (latest.0 == year && latest.1 < month) {
+			latest = (year, month);
+		}
+	}
+	let key = format!("{}-{:02}", latest.0, latest.1);
+	*usage.get(&key).unwrap()
 }
