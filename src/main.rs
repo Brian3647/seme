@@ -1,49 +1,67 @@
-use std::env::args;
-
+use clap::Parser;
 use colored::ColoredString;
 use colored::Colorize;
 use isahc::ReadResponseExt;
-use itertools::Itertools;
 use linku_sona::{UsageCategory, Word};
 
 mod error;
 
 #[derive(serde::Deserialize)]
 #[serde(untagged)]
-pub enum ApiResult {
+enum ApiResult {
 	Word(Box<Word>),
 	Error { message: String },
 }
 
-fn main() -> Result<(), error::Error> {
-	let mut args = args().skip(1);
+#[derive(Parser)]
+struct Cli {
+	/// Show the RAW JSON response from the API
+	#[clap(short = 'j', long)]
+	json: bool,
+	/// The language used to get the word definitions.
+	/// This must be a valid ISO 639-1 language code, such as "en" for English
+	/// or "eo" for Esperanto.
+	#[clap(short = 't', long, default_value = "en")]
+	toki: String,
+	/// The word to get the definition of
+	word: String,
+}
 
-	let word = args.next().unwrap_or("toki".into());
-	let url = format!("https://api.linku.la/v1/words/{}", word);
+fn main() -> Result<(), error::Error> {
+	let cli = Cli::parse();
+
+	let url = format!(
+		"https://api.linku.la/v1/words/{}?lang={}",
+		cli.word, cli.toki
+	);
+
 	let response_string = isahc::get(url)?.text()?;
 
-	if let Some("--json") | Some("-j") = args.next().as_deref() {
+	if cli.json {
 		println!("{}", response_string);
 		return Ok(());
 	}
 
 	let response: ApiResult = serde_json::from_str(&response_string)?;
 	match response {
-		ApiResult::Word(word) => show(word),
+		ApiResult::Word(word) => show(word, cli.toki),
 		ApiResult::Error { message } => eprintln!("Error: {}", message),
 	}
 
 	Ok(())
 }
 
-fn show(word: Box<Word>) {
-	let definition = if let Some(pu_data) = word.pu_verbatim {
-		pu_data.en
-	} else if let Some(ku_data) = word.ku_data {
-		ku_data.keys().join(", ")
-	} else {
-		word.translations.get("en").unwrap().definition.clone()
-	};
+fn show(word: Box<Word>, toki: String) {
+	let translations = word.translations;
+	let definition = translations
+		.get(&toki)
+		.map(|t| t.definition.clone())
+		.unwrap_or_else(|| {
+			format!(
+				"No definition found for \"{}\" with language code \"{}\".",
+				word.word, toki
+			)
+		});
 
 	println!(
 		"{} {} {}",
