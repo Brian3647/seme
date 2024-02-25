@@ -98,14 +98,9 @@ fn colored_usage_category(cat: &UsageCategory) -> ColoredString {
 }
 
 fn get_usage_percentage(usage: HashMap<String, u8>) -> u8 {
-	let mut latest: (u16, u8) = (0, 0);
-	for key in usage.keys() {
-		let year = key[0..4].parse::<u16>().unwrap();
-		let month = key[5..7].parse::<u8>().unwrap();
-		if latest.0 < year || (latest.0 == year && latest.1 < month) {
-			latest = (year, month);
-		}
-	}
-	let key = format!("{}-{:02}", latest.0, latest.1);
-	*usage.get(&key).unwrap()
+	let mut keys = usage.keys().collect::<Vec<_>>();
+	keys.sort();
+	keys.last()
+		.and_then(|k| usage.get(*k).copied())
+		.unwrap_or(0)
 }
