@@ -8,7 +8,7 @@ _note the UCSUR are just a square for me because my font doesn't support them, b
 
 ## Installation
 
-Using `cargo`: `cargo install --git https://Brian3647/seme`
+Using `cargo`: `cargo install --git https://github.com/Brian3647/seme`
 
 ## Usage
 
