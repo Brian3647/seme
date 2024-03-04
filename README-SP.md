@@ -1,18 +1,16 @@
-# seme
+# 󱥙
 
-_[readme written in (UCSUR) sitelen pona can be found here](./README-SP.md)_
+_[󱤪󱦖󱥁󱤙󱥬󱦐󱤌󱤿󱤡󱤎󱦑󱤬󱦗󱥁󱦘](./README.md)_
 
-toki pona word look-up in the CLI
+󱤎󱥩󱤃󱥂󱥍󱦗󱥬󱦖󱥔
 
-![example of usage](.github/example.png)
+![󱥠](.github/example.png)
 
-_note the UCSUR are just a square for me because my font doesn't support them, but if yours does you should see the sitelen pona_
+## 󱤓
 
-## Installation
+󱤙 `cargo`: `cargo install --git https://github.com/Brian3647/seme`
 
-Using `cargo`: `cargo install --git https://github.com/Brian3647/seme`
-
-## Usage
+## 󱥬
 
 ```sh
 Usage: seme [OPTIONS] <WORD>
