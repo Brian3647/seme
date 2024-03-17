@@ -6,6 +6,7 @@ use colored::Colorize;
 use isahc::ReadResponseExt;
 use linku_sona::{UsageCategory, Word};
 
+mod cache;
 mod error;
 
 #[derive(serde::Deserialize)]
@@ -35,7 +36,14 @@ fn main() -> Result<(), error::Error> {
 		cli.word, cli.toki
 	);
 
-	let response_string = isahc::get(url)?.text()?;
+	let response_string = match cache::get_from_cache(&url)? {
+		None => {
+			let result = isahc::get(&url)?.text()?;
+			cache::add_cache(url, result.clone())?;
+			result
+		}
+		Some(result) => result,
+	};
 
 	if cli.json {
 		println!("{}", response_string);
