@@ -1,8 +1,9 @@
-use crate::error::Error;
+use crate::error::Result;
 use serde::{Deserialize, Serialize};
 use std::{collections::HashMap, fs, time::SystemTime};
-//cache lifetime is 1 month
-const CACHE_LIFETIME_SECONDS: u64 = 2_628_288;
+
+// cache lifetime is 1 month
+const CACHE_LIFETIME_SECONDS: u64 = 60 * 60 * 24 * 30;
 
 #[derive(Serialize, Deserialize, Eq, PartialEq, Debug)]
 struct CacheEntry {
@@ -10,8 +11,8 @@ struct CacheEntry {
 	created: SystemTime,
 }
 
-pub fn add_cache(url: String, result: String) -> Result<(), Error> {
-	let mut cache = read_cache_file();
+pub fn add_cache(url: String, result: String) -> Result<()> {
+	let mut cache = read_cache_file()?;
 	cache.insert(
 		url,
 		CacheEntry {
@@ -19,12 +20,13 @@ pub fn add_cache(url: String, result: String) -> Result<(), Error> {
 			created: SystemTime::now(),
 		},
 	);
+
 	write_to_cache(cache)
 }
 
 #[allow(unused_must_use)]
-pub fn get_from_cache(url: &String) -> Result<Option<String>, Error> {
-	let mut cache = read_cache_file();
+pub fn get_from_cache(url: &String) -> Result<Option<String>> {
+	let mut cache = read_cache_file()?;
 	if let Some(entry) = cache.get(url) {
 		if SystemTime::now().duration_since(entry.created).unwrap()
 			<= std::time::Duration::from_secs(CACHE_LIFETIME_SECONDS)
@@ -45,16 +47,18 @@ fn get_cachefile_path() -> std::path::PathBuf {
 	cachefile_path
 }
 
-fn read_cache_file() -> HashMap<String, CacheEntry> {
-	serde_json::from_str(
-		&String::from_utf8(fs::read(get_cachefile_path()).unwrap_or_default()).unwrap_or_default(),
-	)
-	.unwrap_or_default()
+fn read_cache_file() -> Result<HashMap<String, CacheEntry>> {
+	let path = get_cachefile_path();
+	if !path.exists() {
+		fs::write(&path, "{}")?;
+	}
+
+	Ok(serde_json::from_str(&String::from_utf8(fs::read(path)?)?)?)
 }
 
-fn write_to_cache(cache: HashMap<String, CacheEntry>) -> Result<(), Error> {
+fn write_to_cache(cache: HashMap<String, CacheEntry>) -> Result<()> {
 	Ok(fs::write(
 		get_cachefile_path(),
-		serde_json::to_string(&cache).unwrap_or_default(),
+		serde_json::to_string(&cache)?,
 	)?)
 }
