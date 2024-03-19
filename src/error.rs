@@ -5,6 +5,7 @@ pub enum Error {
 	Isahc(isahc::Error),
 	SerdeJson(serde_json::Error),
 	IO(std::io::Error),
+	Confy(confy::ConfyError),
 }
 
 impl From<isahc::Error> for Error {
@@ -24,6 +25,11 @@ impl From<std::io::Error> for Error {
 		Error::IO(e)
 	}
 }
+impl From<confy::ConfyError> for Error {
+	fn from(e: confy::ConfyError) -> Self {
+		Error::Confy(e)
+	}
+}
 
 impl fmt::Display for Error {
 	fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
@@ -31,6 +37,7 @@ impl fmt::Display for Error {
 			Error::Isahc(e) => write!(f, "Isahc error: {}", e),
 			Error::SerdeJson(e) => write!(f, "SerdeJson error: {}", e),
 			Error::IO(e) => write!(f, "IO error: {}", e),
+			Error::Confy(e) => write!(f, "Confy error: {}", e),
 		}
 	}
 }

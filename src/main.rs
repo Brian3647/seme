@@ -7,7 +7,10 @@ use isahc::ReadResponseExt;
 use linku_sona::{UsageCategory, Word};
 
 mod cache;
+mod config;
 mod error;
+
+use config::Config;
 
 #[derive(serde::Deserialize)]
 #[serde(untagged)]
@@ -22,21 +25,22 @@ struct Cli {
 	#[clap(short = 'j', long)]
 	json: bool,
 	/// The language used to get the word definitions.
-	#[clap(short = 't', long, default_value = "en")]
-	toki: String,
+	#[clap(short = 't', long)]
+	toki: Option<String>,
 	/// The word to get the definition of
 	word: String,
 }
 
 fn main() -> Result<(), error::Error> {
 	let cli = Cli::parse();
+	let cfg = Config::get_config()?;
+	let toki = match cli.toki {
+		None => cfg.toki,
+		Some(toki) => toki,
+	};
+	let url = format!("https://api.linku.la/v1/words/{}?lang={}", cli.word, toki);
 
-	let url = format!(
-		"https://api.linku.la/v1/words/{}?lang={}",
-		cli.word, cli.toki
-	);
-
-	let response_string = match cache::get_from_cache(&url)? {
+	let response_string = match cache::get_from_cache(&url, cfg.cache_lifetime_seconds)? {
 		None => {
 			let result = isahc::get(&url)?.text()?;
 			cache::add_cache(url, result.clone())?;
@@ -52,10 +56,9 @@ fn main() -> Result<(), error::Error> {
 
 	let response: ApiResult = serde_json::from_str(&response_string)?;
 	match response {
-		ApiResult::Word(word) => show(word, cli.toki),
+		ApiResult::Word(word) => show(word, toki),
 		ApiResult::Error { message } => eprintln!("Error: {}", message),
 	}
-
 	Ok(())
 }
 
