@@ -1,9 +1,8 @@
-use crate::error::Result;
+use crate::error::Error;
 use serde::{Deserialize, Serialize};
 use std::{collections::HashMap, fs, time::SystemTime};
 
-// cache lifetime is 1 month
-const CACHE_LIFETIME_SECONDS: u64 = 60 * 60 * 24 * 30;
+pub type Result<T> = std::result::Result<T, Error>;
 
 #[derive(Serialize, Deserialize, Eq, PartialEq, Debug)]
 struct CacheEntry {
@@ -13,6 +12,7 @@ struct CacheEntry {
 
 pub fn add_cache(url: String, result: String) -> Result<()> {
 	let mut cache = read_cache_file()?;
+
 	cache.insert(
 		url,
 		CacheEntry {
@@ -25,11 +25,11 @@ pub fn add_cache(url: String, result: String) -> Result<()> {
 }
 
 #[allow(unused_must_use)]
-pub fn get_from_cache(url: &String) -> Result<Option<String>> {
+pub fn get_from_cache(url: &String, cache_lifetime_seconds: u64) -> Result<Option<String>> {
 	let mut cache = read_cache_file()?;
 	if let Some(entry) = cache.get(url) {
 		if SystemTime::now().duration_since(entry.created).unwrap()
-			<= std::time::Duration::from_secs(CACHE_LIFETIME_SECONDS)
+			<= std::time::Duration::from_secs(cache_lifetime_seconds)
 		{
 			return Ok(Some(entry.content.clone()));
 		}

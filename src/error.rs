@@ -7,6 +7,7 @@ pub enum Error {
 	Isahc(isahc::Error),
 	SerdeJson(serde_json::Error),
 	IO(std::io::Error),
+	Confy(confy::ConfyError),
 	Utf8(std::string::FromUtf8Error),
 }
 
@@ -27,6 +28,11 @@ impl From<std::io::Error> for Error {
 		Error::IO(e)
 	}
 }
+impl From<confy::ConfyError> for Error {
+	fn from(e: confy::ConfyError) -> Self {
+		Error::Confy(e)
+	}
+}
 
 impl From<std::string::FromUtf8Error> for Error {
 	fn from(e: std::string::FromUtf8Error) -> Self {
@@ -40,6 +46,7 @@ impl fmt::Display for Error {
 			Error::Isahc(e) => write!(f, "Isahc error: {}", e),
 			Error::SerdeJson(e) => write!(f, "SerdeJson error: {}", e),
 			Error::IO(e) => write!(f, "IO error: {}", e),
+			Error::Confy(e) => write!(f, "Confy error: {}", e),
 			Error::Utf8(e) => write!(f, "UTF-8 error: {}", e),
 		}
 	}
