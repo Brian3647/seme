@@ -31,7 +31,7 @@ struct Cli {
 	word: String,
 }
 
-fn main() -> Result<(), error::Error> {
+fn main() -> error::Result<()> {
 	let cli = Cli::parse();
 	let cfg = Config::get_config()?;
 	let toki = match cli.toki {
