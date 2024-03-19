@@ -12,6 +12,8 @@ mod error;
 
 use config::Config;
 
+pub type Result<T> = std::result::Result<T, error::Error>;
+
 #[derive(serde::Deserialize)]
 #[serde(untagged)]
 enum ApiResult {

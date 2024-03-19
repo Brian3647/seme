@@ -2,6 +2,7 @@ use crate::error::Error;
 use serde::{Deserialize, Serialize};
 use std::{collections::HashMap, fs, time::SystemTime};
 
+pub type Result<T> = std::result::Result<T, Error>;
 
 #[derive(Serialize, Deserialize, Eq, PartialEq, Debug)]
 struct CacheEntry {
@@ -9,8 +10,8 @@ struct CacheEntry {
 	created: SystemTime,
 }
 
-pub fn add_cache(url: String, result: String) -> Result<(), Error> {
-	let mut cache = read_cache_file();
+pub fn add_cache(url: String, result: String) -> Result<()> {
+	let mut cache = read_cache_file()?;
 
 	cache.insert(
 		url,
@@ -24,11 +25,11 @@ pub fn add_cache(url: String, result: String) -> Result<(), Error> {
 }
 
 #[allow(unused_must_use)]
-pub fn get_from_cache(url: &String) -> Result<Option<String>> {
+pub fn get_from_cache(url: &String, cache_lifetime_seconds: u64) -> Result<Option<String>> {
 	let mut cache = read_cache_file()?;
 	if let Some(entry) = cache.get(url) {
 		if SystemTime::now().duration_since(entry.created).unwrap()
-			<= std::time::Duration::from_secs(CACHE_LIFETIME_SECONDS)
+			<= std::time::Duration::from_secs(cache_lifetime_seconds)
 		{
 			return Ok(Some(entry.content.clone()));
 		}
@@ -59,6 +60,5 @@ fn write_to_cache(cache: HashMap<String, CacheEntry>) -> Result<()> {
 	Ok(fs::write(
 		get_cachefile_path(),
 		serde_json::to_string(&cache)?,
-
 	)?)
 }
