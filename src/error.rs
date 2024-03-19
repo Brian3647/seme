@@ -52,4 +52,34 @@ impl fmt::Display for Error {
 	}
 }
 
-impl std::error::Error for Error {}
+impl std::error::Error for Error {
+	fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
+		match self {
+			Error::Isahc(e) => Some(e),
+			Error::SerdeJson(e) => Some(e),
+			Error::IO(e) => Some(e),
+			Error::Confy(e) => Some(e),
+			Error::Utf8(e) => Some(e),
+		}
+	}
+
+	fn description(&self) -> &str {
+		match self {
+			Error::Isahc(_) => "Isahc error",
+			Error::SerdeJson(_) => "SerdeJson error",
+			Error::IO(_) => "IO error",
+			Error::Confy(_) => "Confy error",
+			Error::Utf8(_) => "UTF-8 error",
+		}
+	}
+
+	fn cause(&self) -> Option<&dyn std::error::Error> {
+		match self {
+			Error::Isahc(e) => Some(e),
+			Error::SerdeJson(e) => Some(e),
+			Error::IO(e) => Some(e),
+			Error::Confy(e) => Some(e),
+			Error::Utf8(e) => Some(e),
+		}
+	}
+}

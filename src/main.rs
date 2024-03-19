@@ -12,8 +12,6 @@ mod error;
 
 use config::Config;
 
-pub type Result<T> = std::result::Result<T, error::Error>;
-
 #[derive(serde::Deserialize)]
 #[serde(untagged)]
 enum ApiResult {
@@ -40,6 +38,7 @@ fn main() -> error::Result<()> {
 		None => cfg.toki,
 		Some(toki) => toki,
 	};
+
 	let url = format!("https://api.linku.la/v1/words/{}?lang={}", cli.word, toki);
 
 	let response_string = match cache::get_from_cache(&url, cfg.cache_lifetime_seconds)? {

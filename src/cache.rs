@@ -1,8 +1,6 @@
-use crate::error::Error;
+use crate::error::Result;
 use serde::{Deserialize, Serialize};
 use std::{collections::HashMap, fs, time::SystemTime};
-
-pub type Result<T> = std::result::Result<T, Error>;
 
 #[derive(Serialize, Deserialize, Eq, PartialEq, Debug)]
 struct CacheEntry {
